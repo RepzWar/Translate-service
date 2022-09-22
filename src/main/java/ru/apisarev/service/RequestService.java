@@ -4,6 +4,7 @@ import io.quarkus.hibernate.reactive.panache.common.runtime.ReactiveTransactiona
 import io.smallrye.mutiny.Uni;
 import ru.apisarev.dto.RequestDto;
 import ru.apisarev.dto.RequestFormattedDto;
+import ru.apisarev.dto.ResultDto;
 import ru.apisarev.entity.TranslateRequest;
 import ru.apisarev.repository.RequestRepository;
 
@@ -28,7 +29,7 @@ public class RequestService {
         return repository.findAll().list();
     }
 
-    public Uni<String> translate(RequestDto request) {
+    public Uni<ResultDto> translate(RequestDto request) {
 
         RequestFormattedDto requestFormatted = new RequestFormattedDto();
         requestFormatted.setTargetLanguageCode(request.getTargetLanguageCode());
@@ -41,7 +42,8 @@ public class RequestService {
                 .build();
 
         Uni<String> result = translationService.translate(requestFormatted, translateRequest);
-        return saveRequest(result, translateRequest).replaceWith(result);
+        return saveRequest(result, translateRequest).replaceWith(result).onItem().transform(x->
+                ResultDto.builder().translation(x).build());
     }
 
     @ReactiveTransactional
