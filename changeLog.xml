@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="apisarev" id="1">
+        <createTable tableName="translaterequest">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="remoteaddress" type="varchar(255)"/>
+            <column name="request" type="varchar(255)"/>
+            <column name="result" type="varchar(255)"/>
+            <column name="targetlangcode" type="varchar(255)"/>
+            <column name="requesttime" type="timestamp without time zone"/>
+        </createTable>
+        <createTable tableName="translatedword">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="word" type="varchar(255)"/>
+            <column name="translatedword" type="varchar(255)"/>
+            <column name="originallangcode" type="varchar(255)"/>
+            <column name="translatedlangcode" type="varchar(255)"/>
+            <column name="translation_id" type="bigint">
+                <constraints foreignKeyName="fk_translation_id"
+                    references="translaterequest(id)"/>
+            </column>
+        </createTable>
+        <insert tableName="translaterequest">
+            <column name="remoteaddress" value="127.0.0.1"/>
+            <column name="request" value="Hi world"/>
+            <column name="result" value="Привет мир"/>
+            <column name="targetlangcode" value="ru"/>
+            <column name="requesttime" value="2021-09-26T15:53:01.188243"/>
+        </insert>
+        <insert tableName="translatedword">
+            <column name="word" value="Hi"/>
+            <column name="translatedword" value="Прив"/>
+            <column name="originallangcode" value="en"/>
+            <column name="translatedlangcode" value="ru"/>
+            <column name="translation_id" valueComputed="(SELECT ID FROM translaterequest WHERE request = 'Hi world')"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
