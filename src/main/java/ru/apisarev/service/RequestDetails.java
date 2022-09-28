@@ -1,14 +1,14 @@
 package ru.apisarev.service;
 
 import io.vertx.core.http.HttpServerRequest;
+import lombok.AllArgsConstructor;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
 @RequestScoped
+@AllArgsConstructor
 public class RequestDetails {
 
-    @Inject
     protected HttpServerRequest request;
 
     public String getRemoteAddress() {
